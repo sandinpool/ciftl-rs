@@ -1,0 +1,43 @@
+use crate::encoding::Encoding;
+use crate::*;
+use base64::{engine::general_purpose, Engine as _};
+
+pub struct Base64Encoding();
+
+impl Base64Encoding {
+    pub const fn new() -> Base64Encoding {
+        Base64Encoding()
+    }
+}
+
+impl Encoding for Base64Encoding {
+    fn encode(&self, data: &[u8]) -> Result<String> {
+        let mut buffer = String::new();
+        general_purpose::STANDARD.encode_string(&data, &mut buffer);
+        Ok(buffer)
+    }
+    fn decode(&self, data: &str) -> Result<ByteVector> {
+        let mut buffer: Vec<u8> = ByteVector::new();
+        general_purpose::STANDARD
+            .decode_vec(data, &mut buffer)
+            .or(Err(BASE64_BAD_DECODING_SOURCE.clone()))?;
+        Ok(buffer)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_base64() {
+        let b64 = Base64Encoding::new();
+        let res = b64.encode("Hello, ciftl! 你好！".as_bytes()).unwrap();
+        assert_eq!("SGVsbG8sIGNpZnRsISDkvaDlpb3vvIE=".to_string(), res);
+        let res = b64.decode(&res).unwrap();
+        assert_eq!("Hello, ciftl! 你好！".as_bytes(), &res[..]);
+        let res = b64.decode("SGVsbG8sIGNpZnRsISDkvaDlpb3vvIEA=");
+        assert!(res.is_err());
+        println!("错误：{}", res.unwrap_err());
+    }
+}
