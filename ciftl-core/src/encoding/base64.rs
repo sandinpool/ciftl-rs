@@ -11,10 +11,10 @@ impl Base64Encoding {
 }
 
 impl Encoding for Base64Encoding {
-    fn encode(&self, data: &[u8]) -> Result<String> {
-        let mut buffer = String::new();
-        general_purpose::STANDARD.encode_string(&data, &mut buffer);
-        Ok(buffer)
+    fn encode(&self, data: &[u8]) -> String {
+        let mut res: String = String::new();
+        general_purpose::STANDARD.encode_string(&data, &mut res);
+        res
     }
     fn decode(&self, data: &str) -> Result<ByteVector> {
         let mut buffer: Vec<u8> = ByteVector::new();
@@ -32,7 +32,7 @@ mod tests {
     #[test]
     fn test_base64() {
         let b64 = Base64Encoding::new();
-        let res = b64.encode("Hello, ciftl! 你好！".as_bytes()).unwrap();
+        let res = b64.encode("Hello, ciftl! 你好！".as_bytes());
         assert_eq!("SGVsbG8sIGNpZnRsISDkvaDlpb3vvIE=".to_string(), res);
         let res = b64.decode(&res).unwrap();
         assert_eq!("Hello, ciftl! 你好！".as_bytes(), &res[..]);

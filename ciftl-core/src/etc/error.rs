@@ -8,6 +8,7 @@ enum ErrorCodeEnum {
     EncodingError = 10000,
     // Hex的错误段
     HexEncodingError = 11000,
+    HexBadDecodingSource = 11001,
     // Bin的错误段
     BinEncodingError = 12000,
     // Base64的错误段
@@ -71,6 +72,11 @@ impl Clone for CiftlError {
 }
 
 pub type CiftlResult<T> = Result<T, CiftlError>;
+
+pub const HEX_BAD_DECODING_SOURCE: &'static CiftlError = &CiftlError::new(
+    ErrorCodeEnum::HexBadDecodingSource as ErrorCode,
+    "非法的16进制字符串",
+);
 
 pub const BASE64_BAD_DECODING_SOURCE: &'static CiftlError = &CiftlError::new(
     ErrorCodeEnum::Base64BadDecodingSource as ErrorCode,
