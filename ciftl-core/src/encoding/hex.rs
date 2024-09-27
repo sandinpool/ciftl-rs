@@ -1,5 +1,6 @@
-use crate::encoding::Encoding;
-use crate::etc::error::HEX_BAD_DECODING_SOURCE;
+use ::hex::{decode as hex_decode, encode as hex_encode};
+
+use crate::encoding::EncodingTrait;
 use crate::*;
 
 pub enum HexEncodingCase {
@@ -17,20 +18,20 @@ impl HexEncoding {
 
 impl Default for HexEncoding {
     fn default() -> Self {
-        HexEncoding(HexEncodingCase::UpperCase)
+        Self::new(HexEncodingCase::UpperCase)
     }
 }
 
-impl Encoding for HexEncoding {
+impl EncodingTrait for HexEncoding {
     fn encode(&self, data: &[u8]) -> String {
-        let res = hex::encode(data);
+        let res = hex_encode(data);
         if let HexEncodingCase::LowerCase = self.0 {
             return res.as_str().to_lowercase();
         }
         res.as_str().to_uppercase()
     }
     fn decode(&self, data: &str) -> Result<ByteVector> {
-        let res = hex::decode(data);
+        let res = hex_decode(data);
         if let Ok(v) = res {
             return Ok(v);
         }

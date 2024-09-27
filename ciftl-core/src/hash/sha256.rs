@@ -1,10 +1,10 @@
-use crate::encoding::hex::HexEncoding;
-use crate::encoding::Encoding;
-use crate::etc::ByteArray;
+use std::default;
+
+use crate::*;
 use ring::digest;
 use ring::digest::SHA256_OUTPUT_LEN;
 
-use crate::hash::Hasher;
+use crate::hash::HasherTrait;
 
 pub const SHA256_OUTPUT_LENGTH: usize = SHA256_OUTPUT_LEN;
 
@@ -13,15 +13,17 @@ pub struct Sha256Hasher {
     m_ctx: digest::Context,
 }
 
-impl Sha256Hasher {
-    pub fn new() -> Sha256Hasher {
+impl Default for Sha256Hasher {
+    fn default() -> Sha256Hasher {
         Sha256Hasher {
             m_ctx: digest::Context::new(&digest::SHA256),
         }
     }
 }
 
-impl Hasher<SHA256_OUTPUT_LENGTH> for Sha256Hasher {
+impl HasherTrait for Sha256Hasher {
+    const OUTPUT_LENGTH: usize = SHA256_OUTPUT_LENGTH;
+
     /// 计算一个消息的哈希值
     fn update_message(&mut self, message: &str) -> () {
         self.m_ctx.update(message.as_bytes());
@@ -31,11 +33,11 @@ impl Hasher<SHA256_OUTPUT_LENGTH> for Sha256Hasher {
         self.m_ctx.update(vec);
     }
     /// 获取结果
-    fn finalize(&self) -> ByteArray<SHA256_OUTPUT_LENGTH> {
+    fn finalize(&self) -> ByteVector {
         let res = self.m_ctx.clone().finish();
         // 获取引用的结果
         let ref_res = res.as_ref();
-        let mut res = ByteArray::<SHA256_OUTPUT_LENGTH>::new();
+        let mut res = vec![0u8; Self::OUTPUT_LENGTH];
         for i in 0..SHA256_OUTPUT_LENGTH {
             res[i] = ref_res[i];
         }
@@ -46,22 +48,24 @@ impl Hasher<SHA256_OUTPUT_LENGTH> for Sha256Hasher {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::encoding::hex::HexEncoding;
+    use crate::encoding::EncodingTrait;
 
     #[test]
-    fn test_sha1_operation() {
+    fn test_sha256_operation() {
         let hexe = HexEncoding::default();
-        let mut sha1_hasher = Sha256Hasher::new();
+        let mut sha256_hasher = Sha256Hasher::default();
         // 123456
-        sha1_hasher.update_message("123456");
-        let res = sha1_hasher.finalize();
+        sha256_hasher.update_message("123456");
+        let res = sha256_hasher.finalize();
         let res = hexe.encode(&res);
         assert_eq!(
             "8D969EEF6ECAD3C29A3A629280E686CF0C3F5D5A86AFF3CA12020C923ADC6C92".to_string(),
             res
         );
         // 12345678910
-        sha1_hasher.update_message("78910");
-        let res = sha1_hasher.finalize();
+        sha256_hasher.update_message("78910");
+        let res = sha256_hasher.finalize();
         let res = hexe.encode(&res);
         assert_eq!(
             "63640264849A87C90356129D99EA165E37AA5FABC1FEA46906DF1A7CA50DB492".to_string(),

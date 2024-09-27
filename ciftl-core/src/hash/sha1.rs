@@ -1,10 +1,8 @@
-use crate::encoding::hex::HexEncoding;
-use crate::encoding::Encoding;
-use crate::etc::ByteArray;
+use crate::*;
 use ring::digest;
 use ring::digest::SHA1_OUTPUT_LEN;
 
-use crate::hash::Hasher;
+use crate::hash::HasherTrait;
 
 pub const SHA1_OUTPUT_LENGTH: usize = SHA1_OUTPUT_LEN;
 
@@ -13,15 +11,17 @@ pub struct Sha1Hasher {
     m_ctx: digest::Context,
 }
 
-impl Sha1Hasher {
-    pub fn new() -> Sha1Hasher {
+impl Default for Sha1Hasher {
+    fn default() -> Sha1Hasher {
         Sha1Hasher {
             m_ctx: digest::Context::new(&digest::SHA1_FOR_LEGACY_USE_ONLY),
         }
     }
 }
 
-impl Hasher<SHA1_OUTPUT_LEN> for Sha1Hasher {
+impl HasherTrait for Sha1Hasher {
+    const OUTPUT_LENGTH: usize = SHA1_OUTPUT_LENGTH;
+
     /// 计算一个消息的哈希值
     fn update_message(&mut self, message: &str) -> () {
         self.m_ctx.update(message.as_bytes());
@@ -31,11 +31,11 @@ impl Hasher<SHA1_OUTPUT_LEN> for Sha1Hasher {
         self.m_ctx.update(vec);
     }
     /// 获取结果
-    fn finalize(&self) -> ByteArray<SHA1_OUTPUT_LENGTH> {
+    fn finalize(&self) -> ByteVector {
         let res = self.m_ctx.clone().finish();
         // 获取引用的结果
         let ref_res = res.as_ref();
-        let mut res = ByteArray::<SHA1_OUTPUT_LENGTH>::new();
+        let mut res = vec![0u8; Self::OUTPUT_LENGTH];
         for i in 0..SHA1_OUTPUT_LENGTH {
             res[i] = ref_res[i];
         }
@@ -47,11 +47,13 @@ impl Hasher<SHA1_OUTPUT_LEN> for Sha1Hasher {
 mod tests {
 
     use super::*;
+    use crate::encoding::hex::HexEncoding;
+    use crate::encoding::EncodingTrait;
 
     #[test]
     fn test_sha1_operation() {
         let hexe = HexEncoding::default();
-        let mut sha1_hasher = Sha1Hasher::new();
+        let mut sha1_hasher = Sha1Hasher::default();
         // 123456
         sha1_hasher.update_message("123456");
         let res = sha1_hasher.finalize();

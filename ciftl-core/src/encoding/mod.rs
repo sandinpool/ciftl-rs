@@ -1,9 +1,9 @@
 pub mod hex;
 pub mod base64;
 
-use crate::{etc::ByteVector, Result};
+use crate::*;
 
-pub trait Encoding
+pub trait EncodingTrait
 {
     fn encode(&self, data : &[u8]) -> String;
     fn decode(&self, data : &str) -> Result<ByteVector>;

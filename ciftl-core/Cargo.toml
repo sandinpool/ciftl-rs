@@ -10,7 +10,7 @@ edition = "2021"
 
 [[bin]]
 name = "ciftl-crypter"
-path = "bin/crypter.rs"
+path = "bin/ciftl-crypter.rs"
 version = "0.1.0"
 edition = "2021"
 
@@ -21,3 +21,9 @@ base64 = "0.21.0"
 hex = "0.4.3"
 rand = "0.8.5"
 ring = "0.17.8"
+chacha20 = "0.9.1"
+crc32fast = "1.4.2"
+crc32c = "0.6.8"
+# 命令行工具
+clap = { version = "4.5.13", features = ["derive"] }
+prettytable = "0.10.0"
