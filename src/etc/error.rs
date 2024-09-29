@@ -55,8 +55,10 @@ pub enum CrypterErrorCodeEnum {
     FailedWhenEncodingString,
     /// 字符串解码时失败
     FailedWhenDecodingString,
-    /// 不能对空串加密
-    CannotEncryptEmptyString,
+    /// 不能对空串进行密码操作
+    CannotDoCryptionToEmptyString,
+    /// 密码不能为空
+    PasswordCannotBeEmpty,
 }
 
 #[derive(FromPrimitive)]
@@ -101,17 +103,9 @@ impl CiftlError {
 impl fmt::Display for CiftlError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if let Some(ref m) = self.m_optional_message {
-            write!(
-                f,
-                "{}::{}::{}",
-                self.m_error_code, self.m_error_message, m
-            )
+            write!(f, "{}::{}::{}", self.m_error_code, self.m_error_message, m)
         } else {
-            write!(
-                f,
-                "{}::{}",
-                self.m_error_code, self.m_error_message
-            )
+            write!(f, "{}::{}", self.m_error_code, self.m_error_message)
         }
     }
 }
@@ -199,8 +193,14 @@ pub mod predef {
     );
 
     // 13404
-    pub const CANNOT_ENCRYPT_EMPTY_STRING: &'static CiftlError = &CiftlError::new(
-        CrypterErrorCodeEnum::CannotEncryptEmptyString as ErrorCode,
-        "不能对空串加密",
+    pub const CANNOT_DO_CRYPTION_TO_EMPTY_STRING: &'static CiftlError = &CiftlError::new(
+        CrypterErrorCodeEnum::CannotDoCryptionToEmptyString as ErrorCode,
+        "不能对空串进行密码操作",
+    );
+
+    // 13405
+    pub const PASSWORD_CANNOT_BE_EMPTY: &'static CiftlError = &CiftlError::new(
+        CrypterErrorCodeEnum::PasswordCannotBeEmpty as ErrorCode,
+        "密码不能为空",
     );
 }

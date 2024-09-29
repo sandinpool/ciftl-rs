@@ -7,4 +7,5 @@ pub mod etc;
 /// 哈希模块
 pub mod hash;
 
+// 重导出必要组件
 pub use etc::*;

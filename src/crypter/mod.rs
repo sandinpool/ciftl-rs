@@ -263,10 +263,14 @@ impl<CA: CipherAlgorithmTrait + IVKeyNewTrait, HR: HasherTrait + Default> String
     for StringCrypter<CA, HR>
 {
     fn encrypt(&self, data: &str, password: &str) -> Result<String> {
-        if data.is_empty()
-        {
-            return Err(CANNOT_ENCRYPT_EMPTY_STRING.clone());
+        let (data, password) = (data.trim(), password.trim());
+        if data.is_empty() {
+            return Err(CANNOT_DO_CRYPTION_TO_EMPTY_STRING.clone());
         }
+        if password.is_empty() {
+            return Err(PASSWORD_CANNOT_BE_EMPTY.clone());
+        }
+        
         // 创建一个密码流生成器
         let iv = rand_iv(CA::IV_LENGTH);
         let key = Self::generate_key_from_password(password, CA::KEY_LENGTH);
@@ -296,6 +300,14 @@ impl<CA: CipherAlgorithmTrait + IVKeyNewTrait, HR: HasherTrait + Default> String
     }
 
     fn decrypt(&self, data: &str, password: &str) -> Result<String> {
+        let (data, password) = (data.trim(), password.trim());
+        if data.is_empty() {
+            return Err(CANNOT_DO_CRYPTION_TO_EMPTY_STRING.clone());
+        }
+        if password.is_empty() {
+            return Err(PASSWORD_CANNOT_BE_EMPTY.clone());
+        }
+
         // 对密文进行解码
         let b64 = Base64Encoding::default();
         let data = b64.decode(data)?;
