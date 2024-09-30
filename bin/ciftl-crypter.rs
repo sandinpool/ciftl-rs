@@ -44,6 +44,7 @@ enum FormatModeEnum {
 }
 
 /// 结果项
+#[derive(Debug)]
 struct ResultItem(String, String, String);
 
 /// 命令行相关参数
@@ -102,7 +103,7 @@ fn main() {
         let mut content = String::new();
         let _ = io::stdin().read_to_string(&mut content).unwrap();
         // 按行切分
-        let res = content.trim().split("\n");
+        let content = content.trim().split("\n");
         // 进行加密/解密操作
         let do_cryption = |s: &str| -> Result<String> {
             Ok(match mode {
@@ -112,8 +113,9 @@ fn main() {
         };
         let mut results = Vec::<ResultItem>::new();
         // 执行处理
-        for item in res {
-            let item = item;
+        for item in content {
+            // 这里一定要trim，不然会有换行符
+            let item = item.trim_end();
             match do_cryption(item) {
                 Ok(v) => results.push(ResultItem(item.to_string(), v, "Ok".to_string())),
                 Err(e) => {

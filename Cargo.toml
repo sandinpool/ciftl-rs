@@ -31,6 +31,8 @@ chacha20 = "0.9.1"
 # 哈希相关
 crc32fast = "1.4.2"
 crc32c = "0.6.8"
+# 序列化相关
+serde = "1.0.210"
 
 [dependencies.prettytable]
 version = "0.10.0"

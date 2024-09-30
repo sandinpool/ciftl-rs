@@ -116,6 +116,7 @@ dependencies = [
  "prettytable",
  "rand",
  "ring",
+ "serde",
 ]
 
 [[package]]

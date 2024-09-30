@@ -263,7 +263,6 @@ impl<CA: CipherAlgorithmTrait + IVKeyNewTrait, HR: HasherTrait + Default> String
     for StringCrypter<CA, HR>
 {
     fn encrypt(&self, data: &str, password: &str) -> Result<String> {
-        let (data, password) = (data.trim(), password.trim());
         if data.is_empty() {
             return Err(CANNOT_DO_CRYPTION_TO_EMPTY_STRING.clone());
         }
@@ -300,7 +299,6 @@ impl<CA: CipherAlgorithmTrait + IVKeyNewTrait, HR: HasherTrait + Default> String
     }
 
     fn decrypt(&self, data: &str, password: &str) -> Result<String> {
-        let (data, password) = (data.trim(), password.trim());
         if data.is_empty() {
             return Err(CANNOT_DO_CRYPTION_TO_EMPTY_STRING.clone());
         }
