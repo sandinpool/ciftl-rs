@@ -97,8 +97,9 @@ const fn stream_temp_block_count(m: StreamGeneratorMode) -> usize {
 const fn stream_temp_buffer_size(m: StreamGeneratorMode) -> usize {
     return m as usize * 1024;
 }
-/// StreamGenerator是ciftl自己实现的一个流生成器，具体逻辑是传入一个实现了CipherAlgorithmTrait的类
-/// 通过CipherAlgorithmTrait中的new函数生成一个
+
+/// StreamGenerator是ciftl自己实现的一个流生成器，具体逻辑是传入一个实现了CipherAlgorithmTrait和
+/// IVKeyNewTrait的密码算法结构体，然后通过调用密码算法的加密函数实现自定义的字符串加密器
 pub struct StreamGenerator<CA: CipherAlgorithmTrait + IVKeyNewTrait> {
     /// 加密算法器实例
     m_cipher_algorithm: CA,

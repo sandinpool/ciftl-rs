@@ -12,6 +12,7 @@ pub const CHACHA20_IV_LENGTH: usize = 12;
 /// ChaCha20的Key长度
 pub const CHACHA20_KEY_LENGTH: usize = 32;
 
+/// ChaCha20密码算法
 pub struct ChaCha20CipherAlgorithm {
     m_algo: ExChaCha20,
 }

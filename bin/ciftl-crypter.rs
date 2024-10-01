@@ -8,13 +8,13 @@ use std::io::Write;
 
 #[macro_use]
 extern crate prettytable;
+use prettytable::{Cell, Row, Table};
 
 extern crate serde;
 
 #[macro_use]
 use clap::{Parser, ValueEnum};
-
-use prettytable::{Cell, Row, Table};
+use clap::builder::PossibleValue;
 
 use ciftl::crypter::chacha20::ChaCha20CipherAlgorithm;
 use ciftl::crypter::StringCrypter;
@@ -23,9 +23,30 @@ use ciftl::crypter::StringCrypterTrait as _;
 use ciftl::*;
 
 /// 加密算法
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum CipherAlgorithm {
     ChaCha20,
+    // AES
+}
+
+// 手动为CipherAlgorithm定义ValueEnum
+impl ValueEnum for CipherAlgorithm {
+    fn value_variants<'a>() -> &'a [Self] {
+        static ALL_ITEMS: &'static [CipherAlgorithm] = &[
+            CipherAlgorithm::ChaCha20,
+            // CipherAlgorithm::AES
+        ];
+        ALL_ITEMS
+    }
+
+    fn to_possible_value(&self) -> Option<PossibleValue> {
+        match self {
+            &CipherAlgorithm::ChaCha20 => {
+                Some(PossibleValue::new("ChaCha20").aliases(["chacha20", "cc2"]))
+            }
+            // &CipherAlgorithm::AES => Some(PossibleValue::new("AES").aliases(["aes"])),
+        }
+    }
 }
 
 /// 加密/解密模式
@@ -99,6 +120,7 @@ fn main() {
             CipherAlgorithm::ChaCha20 => {
                 Box::new(StringCrypter::<ChaCha20CipherAlgorithm>::default())
             }
+            _ => panic!("Unsupported cipher algorithm!"),
         };
         let mut content = String::new();
         let _ = io::stdin().read_to_string(&mut content).unwrap();
