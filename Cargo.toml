@@ -44,5 +44,14 @@ default-features = false
 features = ["derive", "std", "default"]
 optional = true
 
+[dev-dependencies]
+criterion = {version = "0.3", features = ["html_reports"]}
+jsonwebtoken = "8.2.0"
+serde_json = "1.0"
+
 [features]
 tools = ["clap", "prettytable"]
+
+[[bench]]
+name = "jsonwebtoken_bench"
+harness = false
