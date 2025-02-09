@@ -1,20 +1,21 @@
 [package]
 name = "ciftl-rs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["sandinpool <dingyz0307@outlook.com>"]
 description = "ciftl-rs is a library, which contains some cipher components."
 keywords = ["crypter", "hash", "cipher"]
 license = "GPL-3.0"
+repository = "https://github.com/sandinpool/ciftl-rs"
 
 [lib]
 name = "ciftl"
-version = "0.1.0"
+version = "0.1.1"
 
 [[bin]]
 name = "ciftl-crypter"
 path = "bin/ciftl-crypter.rs"
-version = "0.1.0"
+version = "0.1.1"
 required-features = ["tools"]
 
 [dependencies]
